@@ -33,3 +33,38 @@ SHA512: 3d86ddc84b7ae03eea4dc83a875a1c102ff05a87e3e706e870ca54d8cc775b4426e1227c
 Homepage: https://github.com/protibimbok/mgit
 Description: Manage multiple GitHub SSH profiles from one machine
 
+Package: mgit
+Architecture: amd64
+Version: 1.0.1
+Priority: optional
+Maintainer: Saad Khan <sakib.saad.khan@gmail.com>
+Installed-Size: 3700
+Depends: git
+Recommends: openssh-client
+Filename: pool/main/mgit_1.0.1_linux_amd64.deb
+Size: 1565560
+MD5sum: 67782a6eb409f080543e8eb13cf25008
+SHA1: fbdc09ab8183f580432bdf157debe3cbdbdcc967
+SHA256: 5c2fdc7419cdd855842ee1a4bd2b612c86225c792f7452541c894cef3437c188
+SHA512: e3f4513fc980f5bb0d738832c1938a69b2ea32c8da804992949e4a7cf10ea35e85d4c922af8d4aca4519dd8cd64c3f01a43236fdc229718861cd98fcc434e774
+Homepage: https://github.com/protibimbok/mgit
+Description: Manage multiple GitHub SSH profiles from one machine
+Architecture-Variant: amd64v1
+
+Package: mgit
+Architecture: arm64
+Version: 1.0.1
+Priority: optional
+Maintainer: Saad Khan <sakib.saad.khan@gmail.com>
+Installed-Size: 3712
+Depends: git
+Recommends: openssh-client
+Filename: pool/main/mgit_1.0.1_linux_arm64.deb
+Size: 1449836
+MD5sum: 00f10d66e94eb602abbfcb43cc45dba6
+SHA1: 4b8fd23d1a8875e49936bc4bf20fe26c2dc43c41
+SHA256: fda4b255dbe5327d61d40dccf047d870e6f4989fb46d118b930b6870684b82ec
+SHA512: c318e39abbf3ef13484b072d9afc5cfbbccedb5d3ec0cfece611b744d391154b4c9ac85a1416e4527f6b0e1b61c22a841d5057488cbb8cc58ee4a06811709b4f
+Homepage: https://github.com/protibimbok/mgit
+Description: Manage multiple GitHub SSH profiles from one machine
+
