@@ -42,13 +42,15 @@ changelog:
       - Merge pull request
       - Merge branch
 
-# ── Homebrew ─────────────────────────────────────────────────────────────────
+# ── Homebrew Cask ────────────────────────────────────────────────────────────
 # Requires: HOMEBREW_TAP_GITHUB_TOKEN secret with write access to homebrew-tap repo
-brews:
+homebrew_casks:
   - name: mgit
     homepage: https://github.com/protibimbok/mgit
     description: Manage multiple GitHub SSH profiles from one machine
     license: MIT
+    binaries:
+      - mgit
     repository:
       owner: protibimbok
       name: homebrew-tap
@@ -56,8 +58,12 @@ brews:
     commit_author:
       name: goreleaserbot
       email: bot@goreleaser.com
-    install: bin.install "mgit"
-    test: system "#{bin}/mgit", "--version"
+    hooks:
+      post:
+        install: |
+          if OS.mac?
+            system_command "/usr/bin/xattr", args: ["-dr", "com.apple.quarantine", "#{staged_path}/mgit"]
+          end
 
 # ── AUR (Arch Linux) ─────────────────────────────────────────────────────────
 # Requires: AUR_KEY secret (SSH private key registered on aur.archlinux.org)

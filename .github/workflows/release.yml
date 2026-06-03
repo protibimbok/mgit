@@ -33,13 +33,22 @@ jobs:
           AUR_KEY_VAL: ${{ secrets.AUR_KEY }}
         run: |
           ARGS="release --clean"
-          [ -z "$HOMEBREW_TOKEN" ] && ARGS="$ARGS --skip=brews"
+          [ -z "$HOMEBREW_TOKEN" ] && ARGS="$ARGS --skip=homebrew"
           [ -z "$AUR_KEY_VAL" ]    && ARGS="$ARGS --skip=aurs"
           echo "args=$ARGS" >> "$GITHUB_OUTPUT"
 
+      - name: Detect GPG signing
+        id: gpg_check
+        env:
+          GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
+        run: |
+          if [ -n "${GPG_PRIVATE_KEY}" ]; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Import GPG key (optional, for apt repo signing)
         id: gpg
-        if: ${{ secrets.GPG_PRIVATE_KEY != '' }}
+        if: steps.gpg_check.outputs.present == 'true'
         uses: crazy-max/ghaction-import-gpg@v6
         with:
           gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
