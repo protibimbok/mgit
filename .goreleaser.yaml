@@ -42,7 +42,8 @@ changelog:
       - Merge pull request
       - Merge branch
 
-# Homebrew tap — set tap.repository to your homebrew-tap repo
+# ── Homebrew ─────────────────────────────────────────────────────────────────
+# Requires: HOMEBREW_TAP_GITHUB_TOKEN secret with write access to homebrew-tap repo
 brews:
   - name: mgit
     homepage: https://github.com/protibimbok/mgit
@@ -51,11 +52,33 @@ brews:
     repository:
       owner: protibimbok
       name: homebrew-tap
+      token: "{{ .Env.HOMEBREW_TAP_GITHUB_TOKEN }}"
     commit_author:
       name: goreleaserbot
       email: bot@goreleaser.com
+    install: bin.install "mgit"
+    test: system "#{bin}/mgit", "--version"
 
-# .deb (apt), .rpm, .apk (Alpine/pacman-like)
+# ── AUR (Arch Linux) ─────────────────────────────────────────────────────────
+# Requires: AUR_KEY secret (SSH private key registered on aur.archlinux.org)
+aurs:
+  - name: mgit-bin
+    homepage: https://github.com/protibimbok/mgit
+    description: Manage multiple GitHub SSH profiles from one machine
+    maintainers:
+      - "Saad Khan <sakib.saad.khan@gmail.com>"
+    license: MIT
+    private_key: "{{ .Env.AUR_KEY }}"
+    git_url: "ssh://aur@aur.archlinux.org/mgit-bin.git"
+    depends:
+      - git
+      - openssh
+    provides:
+      - mgit
+    conflicts:
+      - mgit
+
+# ── Linux packages (.deb / .rpm / .apk) ──────────────────────────────────────
 nfpms:
   - id: packages
     package_name: mgit
@@ -68,3 +91,7 @@ nfpms:
       - rpm
       - apk
     bindir: /usr/bin
+    dependencies:
+      - git
+    recommends:
+      - openssh-client
