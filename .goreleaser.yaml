@@ -1,0 +1,70 @@
+version: 2
+
+project_name: mgit
+
+before:
+  hooks:
+    - go mod tidy
+
+builds:
+  - main: .
+    binary: mgit
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - darwin
+      - windows
+    goarch:
+      - amd64
+      - arm64
+    ldflags:
+      - -s -w -X main.version={{.Version}}
+
+archives:
+  - formats: [tar.gz]
+    format_overrides:
+      - goos: windows
+        formats: [zip]
+    name_template: "{{ .ProjectName }}_{{ .Os }}_{{ .Arch }}"
+    files:
+      - LICENSE
+
+checksum:
+  name_template: checksums.txt
+
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - "^docs:"
+      - "^test:"
+      - Merge pull request
+      - Merge branch
+
+# Homebrew tap — set tap.repository to your homebrew-tap repo
+brews:
+  - name: mgit
+    homepage: https://github.com/protibimbok/mgit
+    description: Manage multiple GitHub SSH profiles from one machine
+    license: MIT
+    repository:
+      owner: protibimbok
+      name: homebrew-tap
+    commit_author:
+      name: goreleaserbot
+      email: bot@goreleaser.com
+
+# .deb (apt), .rpm, .apk (Alpine/pacman-like)
+nfpms:
+  - id: packages
+    package_name: mgit
+    homepage: https://github.com/protibimbok/mgit
+    description: Manage multiple GitHub SSH profiles from one machine
+    maintainer: Saad Khan <sakib.saad.khan@gmail.com>
+    license: MIT
+    formats:
+      - deb
+      - rpm
+      - apk
+    bindir: /usr/bin
