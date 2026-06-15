@@ -4,10 +4,24 @@ Manage multiple GitHub SSH profiles on a single machine. `mgit` wraps `git` — 
 
 ## Installation
 
+### Quick install (Linux / macOS)
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/protibimbok/mgit/master/scripts/install.sh | bash
+```
+
+To install into `~/.local/bin` (no sudo). Override the location:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/protibimbok/mgit/master/scripts/install.sh | bash -s -- --install-dir ~/.local/bin
+```
+
+Then run `mgit gen` to create your first profile.
+
 ### Homebrew (macOS / Linux)
 
 ```bash
-brew tap protibimbok/pkg-dist
+brew tap protibimbok/pkg-dist https://github.com/protibimbok/pkg-dist
 brew install mgit
 ```
 
@@ -51,14 +65,6 @@ sudo rpm -i mgit_linux_amd64.rpm
 # Download the .apk from the latest release, then:
 sudo apk add --allow-untrusted mgit_linux_amd64.apk
 ```
-
-### Shell installer (Linux / macOS)
-
-```bash
-curl -fsSL https://raw.githubusercontent.com/protibimbok/mgit/main/scripts/install.sh | bash
-```
-
-Installs to `/usr/local/bin` by default. Override with `INSTALL_DIR=/your/path`.
 
 ### go install
 
