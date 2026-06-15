@@ -20,8 +20,11 @@ Then run `mgit gen` to create your first profile.
 
 ### Homebrew (macOS / Linux)
 
+Homebrew 6.0+ requires trusting third-party taps before their code is loaded:
+
 ```bash
 brew tap protibimbok/pkg-dist https://github.com/protibimbok/pkg-dist
+brew trust protibimbok/pkg-dist
 brew install mgit
 ```
 
@@ -87,6 +90,10 @@ mgit clone work:myorg/myrepo
 
 # 4. In an existing repo, init and attach a profile
 mgit init
+
+# 5. Add a remote — mgit rewrites GitHub HTTPS or key: URLs to SSH
+mgit remote add origin https://github.com/myorg/myrepo
+mgit remote add origin work:myorg/myrepo
 ```
 
 ---
@@ -163,11 +170,49 @@ personal      Personal          me@gmail.com                   /home/me/.ssh/mgi
 
 ### `mgit fix [remote]`
 
-Rewrites a GitHub HTTPS remote to SSH using a chosen profile. Default remote is `origin`.
+Rewrites an existing GitHub HTTPS remote to SSH using a chosen profile. Default remote is `origin`.
 
 ```bash
 mgit fix          # fixes origin
 mgit fix upstream # fixes a different remote
+```
+
+---
+
+### `mgit remote add` (intercepted)
+
+When you pass through to git, `mgit remote add` intercepts transformable URLs and rewrites them before git runs — same rules as `mgit clone` and `mgit fix`.
+
+```bash
+# HTTPS → prompts for profile → git@hub.<key>:user/repo
+mgit remote add origin https://github.com/myorg/myrepo
+
+# key:user/repo shorthand → git@hub.<key>:user/repo
+mgit remote add origin work:myorg/myrepo
+
+# Already-SSH or non-GitHub URLs pass through unchanged
+mgit remote add upstream git@github.com:other/repo.git
+```
+
+Supported URL forms:
+
+| Input | Result |
+|-------|--------|
+| `https://github.com/user/repo` | `git@hub.<key>:user/repo` (profile picked interactively) |
+| `work:user/repo` | `git@hub.work:user/repo` |
+| `git@hub.work:user/repo` | unchanged |
+
+---
+
+### Pass-through to git
+
+Any other unrecognised subcommand is forwarded to git. Only `remote add` is intercepted today.
+
+```bash
+mgit status
+mgit log --oneline -10
+mgit push origin main
+mgit stash pop
 ```
 
 ---
@@ -183,22 +228,11 @@ mgit del         # prompts if key not given
 
 ---
 
-### Pass-through to git
-
-Any unrecognised subcommand is forwarded to git with all arguments intact:
-
-```bash
-mgit status
-mgit log --oneline -10
-mgit push origin main
-mgit stash pop
-```
-
----
-
 ## How it works
 
 Each profile gets a Host alias in `~/.ssh/config` that maps `hub.<key>` to `github.com` with the right identity file. URLs like `git@hub.work:myorg/myrepo` are resolved by SSH before git ever sees them.
+
+`mgit clone`, `mgit fix`, and `mgit remote add` all accept GitHub HTTPS URLs or `key:user/repo` shorthands and rewrite them to `git@hub.<key>:user/repo` before git runs.
 
 ```
 mgit clone work:myorg/myrepo

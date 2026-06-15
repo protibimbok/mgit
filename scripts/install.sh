@@ -196,6 +196,7 @@ install_via_brew() {
   if ! brew tap | grep -qx "${PKG_DIST_TAP}"; then
     brew tap "${PKG_DIST_TAP}" "${PKG_DIST_URL}"
   fi
+  brew trust "${PKG_DIST_TAP}"
   brew install mgit
   INSTALL_DIR="$(brew --prefix)/bin"
   return 0
