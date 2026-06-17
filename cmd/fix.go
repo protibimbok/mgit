@@ -7,6 +7,7 @@ import (
 
 	"github.com/spf13/cobra"
 	"github.com/protibimbok/mgit/internal/config"
+	"github.com/protibimbok/mgit/internal/deps"
 )
 
 var fixCmd = &cobra.Command{
@@ -20,6 +21,10 @@ func runFix(_ *cobra.Command, args []string) error {
 	remote := "origin"
 	if len(args) == 1 {
 		remote = args[0]
+	}
+
+	if err := deps.RequireGit(); err != nil {
+		return err
 	}
 
 	out, err := exec.Command("git", "remote", "get-url", remote).Output()

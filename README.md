@@ -75,6 +75,35 @@ sudo apk add --allow-untrusted mgit_linux_amd64.apk
 go install github.com/protibimbok/mgit@latest
 ```
 
+### Windows
+
+**Prerequisites:** [Git for Windows](https://git-scm.com/download/win) (choose "Git from the command line and also from 3rd-party software") and an OpenSSH client (`ssh-keygen`). Enable the **OpenSSH Client** optional Windows feature, or use Git's bundled OpenSSH. Restart your terminal after installing.
+
+**Quick install (PowerShell):**
+
+```powershell
+irm https://raw.githubusercontent.com/protibimbok/mgit/master/scripts/install.ps1 | iex
+```
+
+Override install location:
+
+```powershell
+$env:INSTALL_DIR = "$env:LOCALAPPDATA\Programs\mgit"
+irm https://raw.githubusercontent.com/protibimbok/mgit/master/scripts/install.ps1 | iex
+```
+
+**Manual install:** download `mgit_windows_amd64.zip` (or `arm64`) from the [latest release](https://github.com/protibimbok/mgit/releases/latest), extract `mgit.exe`, and add it to your PATH.
+
+**Windows paths:**
+
+| Purpose | Path |
+|---------|------|
+| SSH keys | `%USERPROFILE%\.ssh\mgit_<key>` |
+| SSH config | `%USERPROFILE%\.ssh\config` |
+| Profiles | `%APPDATA%\mgit\profiles.json` |
+
+If `git` or `ssh-keygen` is missing, `mgit` prints install instructions instead of a generic "not found" error.
+
 ---
 
 ## Quick start

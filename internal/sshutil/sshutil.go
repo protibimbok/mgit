@@ -6,6 +6,8 @@ import (
 	"os/exec"
 	"path/filepath"
 	"strings"
+
+	"github.com/protibimbok/mgit/internal/deps"
 )
 
 func KeyPath(key string) (string, error) {
@@ -17,6 +19,11 @@ func KeyPath(key string) (string, error) {
 }
 
 func GenerateKey(key, email string) (string, error) {
+	sshKeygen, err := deps.SSHKeygenPath()
+	if err != nil {
+		return "", err
+	}
+
 	keyPath, err := KeyPath(key)
 	if err != nil {
 		return "", err
@@ -28,7 +35,8 @@ func GenerateKey(key, email string) (string, error) {
 		return "", fmt.Errorf("SSH key %s already exists", keyPath)
 	}
 
-	c := exec.Command("ssh-keygen", "-t", "ed25519", "-C", email, "-f", keyPath, "-N", "")
+	c := exec.Command(sshKeygen, "-t", "ed25519", "-C", email, "-f", keyPath, "-N", "")
+	c.Env = os.Environ()
 	c.Stdout = os.Stdout
 	c.Stderr = os.Stderr
 	if err := c.Run(); err != nil {
@@ -52,7 +60,8 @@ func AddToSSHConfig(key, keyPath string) error {
 		}
 	}
 
-	entry := fmt.Sprintf("\nHost hub.%s\n  HostName github.com\n  User git\n  IdentityFile %s\n  IdentitiesOnly yes\n", key, keyPath)
+	identity := sshIdentityFile(keyPath)
+	entry := fmt.Sprintf("\nHost hub.%s\n  HostName github.com\n  User git\n  IdentityFile %s\n  IdentitiesOnly yes\n", key, identity)
 	f, err := os.OpenFile(configPath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0600)
 	if err != nil {
 		return err
@@ -78,7 +87,8 @@ func RemoveFromSSHConfig(key string) error {
 	}
 
 	target := "Host hub." + key
-	lines := strings.Split(string(data), "\n")
+	normalized := strings.ReplaceAll(string(data), "\r\n", "\n")
+	lines := strings.Split(normalized, "\n")
 	var out []string
 	skip := false
 
@@ -86,14 +96,12 @@ func RemoveFromSSHConfig(key string) error {
 		stripped := strings.TrimSpace(line)
 		if stripped == target {
 			skip = true
-			// trim trailing blank lines already written
 			for len(out) > 0 && strings.TrimSpace(out[len(out)-1]) == "" {
 				out = out[:len(out)-1]
 			}
 			continue
 		}
 		if skip {
-			// a non-indented non-empty line starts the next block
 			if len(line) > 0 && line[0] != ' ' && line[0] != '\t' {
 				skip = false
 			} else {
@@ -104,4 +112,14 @@ func RemoveFromSSHConfig(key string) error {
 	}
 
 	return os.WriteFile(configPath, []byte(strings.Join(out, "\n")), 0600)
+}
+
+// FormatSSHConfigEntry builds an SSH config host block for testing.
+func FormatSSHConfigEntry(key, keyPath string) string {
+	identity := sshIdentityFile(keyPath)
+	return fmt.Sprintf("\nHost hub.%s\n  HostName github.com\n  User git\n  IdentityFile %s\n  IdentitiesOnly yes\n", key, identity)
+}
+
+func sshIdentityFile(path string) string {
+	return strings.ReplaceAll(filepath.ToSlash(path), "\\", "/")
 }

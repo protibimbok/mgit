@@ -19,9 +19,24 @@ jobs:
 
       - run: go build ./...
       - run: go vet ./...
+      - run: go test ./...
 
       - name: goreleaser check
         uses: goreleaser/goreleaser-action@v6
         with:
           version: "~> v2"
           args: check
+
+  windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: true
+
+      - run: go build ./...
+      - run: go vet ./...
+      - run: go test ./...

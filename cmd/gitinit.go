@@ -7,6 +7,7 @@ import (
 
 	"github.com/spf13/cobra"
 	"github.com/protibimbok/mgit/internal/config"
+	"github.com/protibimbok/mgit/internal/deps"
 	"github.com/protibimbok/mgit/internal/prompt"
 )
 
@@ -31,6 +32,10 @@ func runGitInit(_ *cobra.Command, _ []string) error {
 		return err
 	}
 	profile := cfg.Profiles[idx]
+
+	if err := deps.RequireGit(); err != nil {
+		return err
+	}
 
 	if _, err := os.Stat(".git"); os.IsNotExist(err) {
 		c := exec.Command("git", "init")

@@ -3,6 +3,7 @@ package cmd
 import (
 	"fmt"
 	"os"
+	"runtime"
 	"strings"
 
 	"github.com/spf13/cobra"
@@ -52,7 +53,7 @@ func runGen(_ *cobra.Command, _ []string) error {
 		return err
 	}
 	if err := sshutil.AddToSSHConfig(key, keyPath); err != nil {
-		return fmt.Errorf("failed to update ~/.ssh/config: %w", err)
+		return fmt.Errorf("failed to update SSH config: %w", err)
 	}
 
 	p := config.Profile{Key: key, Label: label, Name: name, Email: email, SSHKey: keyPath}
@@ -71,6 +72,18 @@ func runGen(_ *cobra.Command, _ []string) error {
 	fmt.Printf("\nProfile %q created.\n", key)
 	fmt.Printf("SSH host alias: hub.%s → github.com\n\n", key)
 	fmt.Printf("Add this public key to GitHub (Settings → SSH and GPG keys):\n\n%s\n", strings.TrimSpace(string(pubKey)))
-	fmt.Printf("\nTo load the key in your current shell:\n  ssh-add %s\n", keyPath)
+	printSSHAddHint(keyPath)
 	return nil
+}
+
+func printSSHAddHint(keyPath string) {
+	if runtime.GOOS == "windows" {
+		fmt.Printf("\nTo load the key (if using a passphrase or ssh-agent):\n")
+		fmt.Printf("  Get-Service ssh-agent | Set-Service -StartupType Manual\n")
+		fmt.Printf("  Start-Service ssh-agent\n")
+		fmt.Printf("  ssh-add %s\n", keyPath)
+		fmt.Printf("Open a new terminal if ssh-add is not found.\n")
+		return
+	}
+	fmt.Printf("\nTo load the key in your current shell:\n  ssh-add %s\n", keyPath)
 }

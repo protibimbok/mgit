@@ -57,7 +57,7 @@ func runDel(_ *cobra.Command, args []string) error {
 		}
 	}
 	if err := sshutil.RemoveFromSSHConfig(key); err != nil {
-		fmt.Printf("warning: could not update ~/.ssh/config: %v\n", err)
+		fmt.Printf("warning: could not update SSH config: %v\n", err)
 	}
 
 	cfg.Remove(key)

@@ -6,6 +6,7 @@ import (
 	"os/exec"
 
 	"github.com/protibimbok/mgit/cmd"
+	"github.com/protibimbok/mgit/internal/deps"
 )
 
 // set via -ldflags "-X main.version=x.y.z"
@@ -32,6 +33,11 @@ func main() {
 				os.Exit(1)
 			} else if ok {
 				gitArgs = newArgs
+			}
+
+			if err := deps.RequireGit(); err != nil {
+				fmt.Fprintln(os.Stderr, err)
+				os.Exit(1)
 			}
 
 			c := exec.Command("git", gitArgs...)

@@ -7,6 +7,7 @@ import (
 
 	"github.com/spf13/cobra"
 	"github.com/protibimbok/mgit/internal/config"
+	"github.com/protibimbok/mgit/internal/deps"
 )
 
 var cloneCmd = &cobra.Command{
@@ -31,6 +32,10 @@ func runClone(_ *cobra.Command, args []string) error {
 	}
 	if !transformed {
 		return fmt.Errorf("invalid format: use <key>:<user>/<repo> or a GitHub HTTPS URL")
+	}
+
+	if err := deps.RequireGit(); err != nil {
+		return err
 	}
 
 	c := exec.Command("git", append([]string{"clone", sshURL}, rest...)...)
