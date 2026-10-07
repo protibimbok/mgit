@@ -2,6 +2,7 @@ package deps
 
 import (
 	"fmt"
+	"os/exec"
 	"runtime"
 	"strings"
 )
@@ -14,18 +15,13 @@ func RequireGit() error {
 }
 
 func RequireSSHKeygen() error {
-	_, err := SSHKeygenPath()
-	return err
-}
-
-// SSHKeygenPath resolves ssh-keygen on PATH, including Windows fallbacks when
-// a 32-bit process cannot see System32 via WOW64 filesystem redirection.
-func SSHKeygenPath() (string, error) {
-	p, err := lookPath("ssh-keygen")
-	if err != nil {
-		return "", fmt.Errorf("%s", sshKeygenMissingMessage())
+	if runtime.GOOS == "windows" {
+		return nil
 	}
-	return p, nil
+	if _, err := exec.LookPath("ssh-keygen"); err == nil {
+		return nil
+	}
+	return fmt.Errorf("%s", sshKeygenMissingMessage())
 }
 
 func GitMissingMessage() string {
@@ -64,7 +60,7 @@ func sshKeygenMissingMessage() string {
 	switch runtime.GOOS {
 	case "windows":
 		b.WriteString("  Windows:\n")
-		b.WriteString("    Install OpenSSH Client and restart your terminal.\n")
+		b.WriteString("    mgit gen does not need ssh-keygen on Windows — update mgit if you see this.\n")
 	default:
 		b.WriteString("  macOS / Linux:\n")
 		b.WriteString("    OpenSSH client is usually pre-installed. If missing: brew install openssh / apt install openssh-client\n")

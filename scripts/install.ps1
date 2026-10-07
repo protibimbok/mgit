@@ -57,39 +57,12 @@ mgit: git is not installed or not on your PATH.
 '@
 }
 
-function Get-SSHKeygenMissingMessage {
-@'
-mgit: ssh-keygen is not installed or not on your PATH.
-
-  mgit gen creates SSH keys using ssh-keygen.
-
-  Windows:
-    Settings → Apps → Optional features → Add "OpenSSH Client"
-    — or — install Git for Windows (includes ssh-keygen)
-    — or — winget install Microsoft.OpenSSH.Beta
-    Then restart your terminal.
-'@
-}
-
 function Test-Dependencies {
-    $missing = @()
-    if (-not (Get-Command git -ErrorAction SilentlyContinue)) {
-        $missing += "git"
-    }
-    if (-not (Get-Command ssh-keygen -ErrorAction SilentlyContinue)) {
-        $missing += "ssh-keygen"
-    }
-    if ($missing.Count -eq 0) { return }
+    if (Get-Command git -ErrorAction SilentlyContinue) { return }
 
-    Write-Warn "Some prerequisites are missing (mgit needs them for most commands):"
-    if ($missing -contains "git") {
-        Write-Host ""
-        Write-Host (Get-GitMissingMessage)
-    }
-    if ($missing -contains "ssh-keygen") {
-        Write-Host ""
-        Write-Host (Get-SSHKeygenMissingMessage)
-    }
+    Write-Warn "Git is not installed (mgit needs it for most commands):"
+    Write-Host ""
+    Write-Host (Get-GitMissingMessage)
     Write-Host ""
 }
 

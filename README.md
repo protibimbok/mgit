@@ -77,7 +77,7 @@ go install github.com/protibimbok/mgit@latest
 
 ### Windows
 
-**Prerequisites:** [Git for Windows](https://git-scm.com/download/win) (choose "Git from the command line and also from 3rd-party software") and an OpenSSH client (`ssh-keygen`). Enable the **OpenSSH Client** optional Windows feature, or use Git's bundled OpenSSH. Restart your terminal after installing.
+**Prerequisites:** [Git for Windows](https://git-scm.com/download/win) (choose "Git from the command line and also from 3rd-party software"). `mgit gen` generates SSH keys natively on Windows — you do not need `ssh-keygen` installed separately.
 
 **Quick install (PowerShell):**
 
@@ -102,7 +102,7 @@ irm https://raw.githubusercontent.com/protibimbok/mgit/master/scripts/install.ps
 | SSH config | `%USERPROFILE%\.ssh\config` |
 | Profiles | `%APPDATA%\mgit\profiles.json` |
 
-If `git` or `ssh-keygen` is missing, `mgit` prints install instructions instead of a generic "not found" error.
+If `git` is missing, `mgit` prints install instructions instead of a generic "not found" error. On macOS and Linux, `mgit gen` also needs `ssh-keygen` (usually pre-installed with OpenSSH).
 
 ---
 

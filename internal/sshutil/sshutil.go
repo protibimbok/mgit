@@ -3,11 +3,8 @@ package sshutil
 import (
 	"fmt"
 	"os"
-	"os/exec"
 	"path/filepath"
 	"strings"
-
-	"github.com/protibimbok/mgit/internal/deps"
 )
 
 func KeyPath(key string) (string, error) {
@@ -19,11 +16,6 @@ func KeyPath(key string) (string, error) {
 }
 
 func GenerateKey(key, email string) (string, error) {
-	sshKeygen, err := deps.SSHKeygenPath()
-	if err != nil {
-		return "", err
-	}
-
 	keyPath, err := KeyPath(key)
 	if err != nil {
 		return "", err
@@ -34,13 +26,8 @@ func GenerateKey(key, email string) (string, error) {
 	if _, err := os.Stat(keyPath); err == nil {
 		return "", fmt.Errorf("SSH key %s already exists", keyPath)
 	}
-
-	c := exec.Command(sshKeygen, "-t", "ed25519", "-C", email, "-f", keyPath, "-N", "")
-	c.Env = os.Environ()
-	c.Stdout = os.Stdout
-	c.Stderr = os.Stderr
-	if err := c.Run(); err != nil {
-		return "", fmt.Errorf("ssh-keygen failed: %w", err)
+	if err := generateKeyAt(keyPath, email); err != nil {
+		return "", err
 	}
 	return keyPath, nil
 }
