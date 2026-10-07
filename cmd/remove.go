@@ -10,14 +10,14 @@ import (
 	"github.com/protibimbok/mgit/internal/sshutil"
 )
 
-var delCmd = &cobra.Command{
-	Use:   "del [key]",
+var removeCmd = &cobra.Command{
+	Use:   "remove [key]",
 	Short: "Remove a profile and its SSH key",
 	Args:  cobra.MaximumNArgs(1),
-	RunE:  runDel,
+	RunE:  runRemove,
 }
 
-func runDel(_ *cobra.Command, args []string) error {
+func runRemove(_ *cobra.Command, args []string) error {
 	cfg, err := config.Load()
 	if err != nil {
 		return err

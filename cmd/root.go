@@ -24,10 +24,10 @@ func Execute(version string) {
 }
 
 func init() {
-	rootCmd.AddCommand(genCmd)
+	rootCmd.AddCommand(newCmd)
 	rootCmd.AddCommand(gitInitCmd)
 	rootCmd.AddCommand(cloneCmd)
-	rootCmd.AddCommand(delCmd)
+	rootCmd.AddCommand(removeCmd)
 	rootCmd.AddCommand(listCmd)
 	rootCmd.AddCommand(fixCmd)
 }

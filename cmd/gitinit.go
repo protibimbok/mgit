@@ -23,7 +23,7 @@ func runGitInit(_ *cobra.Command, args []string) error {
 		return err
 	}
 	if len(cfg.Profiles) == 0 {
-		return fmt.Errorf("no profiles found — run 'mgit gen' to create one")
+		return fmt.Errorf("no profiles found — run 'mgit new' to create one")
 	}
 
 	if err := deps.RequireGit(); err != nil {

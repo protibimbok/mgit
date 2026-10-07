@@ -56,11 +56,11 @@ func gitMissingMessage() string {
 func sshKeygenMissingMessage() string {
 	var b strings.Builder
 	b.WriteString("mgit: ssh-keygen is not installed or not on your PATH.\n\n")
-	b.WriteString("  mgit gen creates SSH keys using ssh-keygen.\n\n")
+	b.WriteString("  mgit new creates SSH keys using ssh-keygen.\n\n")
 	switch runtime.GOOS {
 	case "windows":
 		b.WriteString("  Windows:\n")
-		b.WriteString("    mgit gen does not need ssh-keygen on Windows — update mgit if you see this.\n")
+		b.WriteString("    mgit new does not need ssh-keygen on Windows — update mgit if you see this.\n")
 	default:
 		b.WriteString("  macOS / Linux:\n")
 		b.WriteString("    OpenSSH client is usually pre-installed. If missing: brew install openssh / apt install openssh-client\n")

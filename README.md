@@ -16,7 +16,7 @@ To install into `~/.local/bin` (no sudo). Override the location:
 curl -fsSL https://raw.githubusercontent.com/protibimbok/mgit/master/scripts/install.sh | bash -s -- --install-dir ~/.local/bin
 ```
 
-Then run `mgit gen` to create your first profile.
+Then run `mgit new` to create your first profile.
 
 ### Homebrew (macOS / Linux)
 
@@ -77,7 +77,7 @@ go install github.com/protibimbok/mgit@latest
 
 ### Windows
 
-**Prerequisites:** [Git for Windows](https://git-scm.com/download/win) (choose "Git from the command line and also from 3rd-party software"). `mgit gen` generates SSH keys natively on Windows — you do not need `ssh-keygen` installed separately.
+**Prerequisites:** [Git for Windows](https://git-scm.com/download/win) (choose "Git from the command line and also from 3rd-party software"). `mgit new` generates SSH keys natively on Windows — you do not need `ssh-keygen` installed separately.
 
 **Quick install (PowerShell):**
 
@@ -102,7 +102,7 @@ irm https://raw.githubusercontent.com/protibimbok/mgit/master/scripts/install.ps
 | SSH config | `%USERPROFILE%\.ssh\config` |
 | Profiles | `%APPDATA%\mgit\profiles.json` |
 
-If `git` is missing, `mgit` prints install instructions instead of a generic "not found" error. On macOS and Linux, `mgit gen` also needs `ssh-keygen` (usually pre-installed with OpenSSH).
+If `git` is missing, `mgit` prints install instructions instead of a generic "not found" error. On macOS and Linux, `mgit new` also needs `ssh-keygen` (usually pre-installed with OpenSSH).
 
 ---
 
@@ -110,7 +110,7 @@ If `git` is missing, `mgit` prints install instructions instead of a generic "no
 
 ```bash
 # 1. Create your first profile (generates SSH key + updates ~/.ssh/config)
-mgit gen
+mgit new
 
 # 2. Add the printed public key to GitHub → Settings → SSH and GPG keys
 
@@ -129,7 +129,7 @@ mgit remote add origin work:myorg/myrepo
 
 ## Commands
 
-### `mgit gen`
+### `mgit new`
 
 Interactively creates a new SSH profile.
 
@@ -267,13 +267,13 @@ mgit stash pop
 
 ---
 
-### `mgit del [key]`
+### `mgit remove [key]`
 
 Removes a profile, its SSH key pair, and its `~/.ssh/config` block.
 
 ```bash
-mgit del work    # remove by key
-mgit del         # prompts if key not given
+mgit remove work    # remove by key
+mgit remove         # prompts if key not given
 ```
 
 ---

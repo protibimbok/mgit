@@ -16,7 +16,7 @@ var hubRemotePattern = regexp.MustCompile(`^git@hub\.([^:]+):`)
 
 func chooseProfile(cfg *config.Config, label string) (*config.Profile, error) {
 	if len(cfg.Profiles) == 0 {
-		return nil, fmt.Errorf("no profiles found — run 'mgit gen' to create one")
+		return nil, fmt.Errorf("no profiles found — run 'mgit new' to create one")
 	}
 
 	if p, how := detectRepoProfile(cfg); p != nil {

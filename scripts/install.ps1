@@ -151,4 +151,4 @@ Write-Info "Installed: $Installed"
 & $Installed --version
 
 Show-PathHint $InstallDir
-Write-Info "Run 'mgit gen' to create your first profile."
+Write-Info "Run 'mgit new' to create your first profile."

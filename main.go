@@ -13,10 +13,10 @@ import (
 var version = "dev"
 
 var mgitCommands = map[string]bool{
-	"gen":     true,
+	"new":     true,
 	"init":    true,
 	"clone":   true,
-	"del":     true,
+	"remove":  true,
 	"list":    true,
 	"fix":     true,
 	"help":    true,

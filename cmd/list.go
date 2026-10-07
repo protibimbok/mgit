@@ -19,7 +19,7 @@ func runList(_ *cobra.Command, _ []string) error {
 		return err
 	}
 	if len(cfg.Profiles) == 0 {
-		fmt.Println("No profiles found. Run 'mgit gen' to create one.")
+		fmt.Println("No profiles found. Run 'mgit new' to create one.")
 		return nil
 	}
 	fmt.Printf("%-12s  %-16s  %-28s  %s\n", "KEY", "LABEL", "EMAIL", "SSH KEY")

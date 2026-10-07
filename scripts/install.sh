@@ -259,4 +259,4 @@ else
 fi
 
 path_hint
-info "Run 'mgit gen' to create your first profile."
+info "Run 'mgit new' to create your first profile."

@@ -12,13 +12,13 @@ import (
 	"github.com/protibimbok/mgit/internal/sshutil"
 )
 
-var genCmd = &cobra.Command{
-	Use:   "gen",
+var newCmd = &cobra.Command{
+	Use:   "new",
 	Short: "Generate a new SSH key and register a profile",
-	RunE:  runGen,
+	RunE:  runNew,
 }
 
-func runGen(_ *cobra.Command, _ []string) error {
+func runNew(_ *cobra.Command, _ []string) error {
 	cfg, err := config.Load()
 	if err != nil {
 		return err
@@ -45,7 +45,7 @@ func runGen(_ *cobra.Command, _ []string) error {
 	}
 
 	if cfg.FindByKey(key) != nil {
-		return fmt.Errorf("profile %q already exists — run 'mgit del %s' first", key, key)
+		return fmt.Errorf("profile %q already exists — run 'mgit remove %s' first", key, key)
 	}
 
 	keyPath, err := sshutil.GenerateKey(key, email)
