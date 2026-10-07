@@ -159,9 +159,12 @@ After running, copy the printed public key to GitHub.
 ### `mgit init`
 
 Initialises a git repo (if needed) and sets `user.name` / `user.email` from a profile.
+The chosen profile is remembered in the repo (`git config mgit.profile`), so running
+`mgit init` again, or any other mgit command in that repo, does not ask again.
 
 ```bash
-mgit init
+mgit init          # auto-detects or asks once
+mgit init work     # use (or switch to) a specific profile
 ```
 
 ---
@@ -175,7 +178,7 @@ Clones a repository using a profile key or an HTTPS URL.
 mgit clone work:myorg/myrepo
 mgit clone personal:myname/dotfiles
 
-# HTTPS URL → prompts you to pick a profile
+# HTTPS URL → uses the profile if only one exists, otherwise asks once
 mgit clone https://github.com/myorg/myrepo
 
 # Extra git flags are forwarded
@@ -213,7 +216,7 @@ mgit fix upstream # fixes a different remote
 When you pass through to git, `mgit remote add` intercepts transformable URLs and rewrites them before git runs — same rules as `mgit clone` and `mgit fix`.
 
 ```bash
-# HTTPS → prompts for profile → git@hub.<key>:user/repo
+# HTTPS → uses the repo's profile (asks only if unknown) → git@hub.<key>:user/repo
 mgit remote add origin https://github.com/myorg/myrepo
 
 # key:user/repo shorthand → git@hub.<key>:user/repo
@@ -227,9 +230,27 @@ Supported URL forms:
 
 | Input | Result |
 |-------|--------|
-| `https://github.com/user/repo` | `git@hub.<key>:user/repo` (profile picked interactively) |
+| `https://github.com/user/repo` | `git@hub.<key>:user/repo` (profile auto-detected, see below) |
 | `work:user/repo` | `git@hub.work:user/repo` |
 | `git@hub.work:user/repo` | unchanged |
+
+---
+
+### Profile auto-detection
+
+Commands that need a profile (`init`, `clone`, `fix`, `remote add`) only ask when
+the answer is not already known. In order, mgit checks:
+
+1. `mgit.profile` in the repo's local git config (written by `init`, `clone`, `fix`
+   and `remote add` after a profile is chosen)
+2. an existing `git@hub.<key>:` remote in the repo
+3. the repo's local `user.email`, when it matches exactly one profile
+4. whether only one profile exists
+
+If none of these apply you are prompted once, and the answer is stored in the repo.
+`mgit clone` also writes `user.name`, `user.email` and `mgit.profile` into the new
+clone. To switch a repo to a different profile, run `mgit init <key>`, or use the key
+shorthand for remotes (`mgit remote add origin work:user/repo`).
 
 ---
 

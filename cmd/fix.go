@@ -42,13 +42,14 @@ func runFix(_ *cobra.Command, args []string) error {
 		return err
 	}
 
-	sshURL, _, err := resolveRemoteURL(remoteURL, cfg, "Select profile for SSH remote")
+	sshURL, profile, err := resolveRemoteURL(remoteURL, cfg, "Select profile for SSH remote")
 	if err != nil {
 		return err
 	}
 	if err := exec.Command("git", "remote", "set-url", remote, sshURL).Run(); err != nil {
 		return fmt.Errorf("failed to update remote: %w", err)
 	}
+	rememberProfile("", profile.Key)
 
 	fmt.Printf("Remote %q updated:\n  %s\n→ %s\n", remote, remoteURL, sshURL)
 	return nil

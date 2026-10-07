@@ -8,16 +8,16 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/protibimbok/mgit/internal/config"
 	"github.com/protibimbok/mgit/internal/deps"
-	"github.com/protibimbok/mgit/internal/prompt"
 )
 
 var gitInitCmd = &cobra.Command{
-	Use:   "init",
+	Use:   "init [key]",
 	Short: "Init git repo (if needed) and set user config from a profile",
+	Args:  cobra.MaximumNArgs(1),
 	RunE:  runGitInit,
 }
 
-func runGitInit(_ *cobra.Command, _ []string) error {
+func runGitInit(_ *cobra.Command, args []string) error {
 	cfg, err := config.Load()
 	if err != nil {
 		return err
@@ -26,14 +26,18 @@ func runGitInit(_ *cobra.Command, _ []string) error {
 		return fmt.Errorf("no profiles found — run 'mgit gen' to create one")
 	}
 
-	labels := profileLabels(cfg.Profiles)
-	idx, err := prompt.Select("Choose a profile", labels)
-	if err != nil {
+	if err := deps.RequireGit(); err != nil {
 		return err
 	}
-	profile := cfg.Profiles[idx]
 
-	if err := deps.RequireGit(); err != nil {
+	// An explicit key always wins; otherwise reuse what the repo already
+	// has configured (mgit.profile, remotes, user.email) before asking.
+	var profile *config.Profile
+	if len(args) == 1 {
+		if profile = cfg.FindByKey(args[0]); profile == nil {
+			return fmt.Errorf("unknown profile key %q — run 'mgit list' to see available profiles", args[0])
+		}
+	} else if profile, err = chooseProfile(cfg, "Choose a profile"); err != nil {
 		return err
 	}
 
@@ -46,11 +50,8 @@ func runGitInit(_ *cobra.Command, _ []string) error {
 		}
 	}
 
-	for _, kv := range [][2]string{{"user.name", profile.Name}, {"user.email", profile.Email}} {
-		c := exec.Command("git", "config", kv[0], kv[1])
-		if err := c.Run(); err != nil {
-			return err
-		}
+	if err := applyProfileToRepo("", profile); err != nil {
+		return err
 	}
 	fmt.Printf("Git user set to %s <%s>\n", profile.Name, profile.Email)
 	return nil

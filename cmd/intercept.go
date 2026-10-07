@@ -23,12 +23,15 @@ func TryInterceptGitArgs(args []string) ([]string, bool, error) {
 		return nil, false, err
 	}
 
-	sshURL, transformed, err := resolveRemoteURL(rawURL, cfg, "Select profile")
+	sshURL, profile, err := resolveRemoteURL(rawURL, cfg, "Select profile")
 	if err != nil {
 		return nil, false, err
 	}
-	if !transformed {
+	if profile == nil {
 		return args, false, nil
+	}
+	if insideGitRepo("") {
+		rememberProfile("", profile.Key)
 	}
 
 	newArgs := make([]string, len(args))

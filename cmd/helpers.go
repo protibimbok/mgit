@@ -6,38 +6,38 @@ import (
 	"strings"
 
 	"github.com/protibimbok/mgit/internal/config"
-	"github.com/protibimbok/mgit/internal/prompt"
 )
 
 var httpsPattern = regexp.MustCompile(`^https?://github\.com/([^/]+)/([^/]+?)(?:\.git)?$`)
 
-func resolveRemoteURL(raw string, cfg *config.Config, promptLabel string) (string, bool, error) {
+// resolveRemoteURL turns a GitHub HTTPS URL or a <key>:<user>/<repo> shorthand
+// into a git@hub.<key>:<user>/<repo> SSH URL. The returned profile is nil when
+// the URL was left unchanged.
+func resolveRemoteURL(raw string, cfg *config.Config, promptLabel string) (string, *config.Profile, error) {
 	switch {
 	case strings.HasPrefix(raw, "https://github.com/") || strings.HasPrefix(raw, "http://github.com/"):
 		path := strings.TrimPrefix(strings.TrimPrefix(raw, "https://"), "http://")
 		path = strings.TrimPrefix(path, "github.com/")
 		path = strings.TrimSuffix(path, ".git")
 
-		if len(cfg.Profiles) == 0 {
-			return "", false, fmt.Errorf("no profiles found — run 'mgit gen' to create one")
-		}
-		idx, err := prompt.Select(promptLabel, profileLabels(cfg.Profiles))
+		p, err := chooseProfile(cfg, promptLabel)
 		if err != nil {
-			return "", false, err
+			return "", nil, err
 		}
-		return fmt.Sprintf("git@hub.%s:%s", cfg.Profiles[idx].Key, path), true, nil
+		return fmt.Sprintf("git@hub.%s:%s", p.Key, path), p, nil
 
 	case strings.Contains(raw, ":") && !strings.Contains(raw, "://") && !strings.HasPrefix(raw, "git@"):
 		parts := strings.SplitN(raw, ":", 2)
 		key, path := parts[0], parts[1]
-		if cfg.FindByKey(key) == nil {
-			return "", false, fmt.Errorf("unknown profile key %q — run 'mgit list' to see available profiles", key)
+		p := cfg.FindByKey(key)
+		if p == nil {
+			return "", nil, fmt.Errorf("unknown profile key %q — run 'mgit list' to see available profiles", key)
 		}
 		path = strings.TrimSuffix(path, ".git")
-		return fmt.Sprintf("git@hub.%s:%s", key, path), true, nil
+		return fmt.Sprintf("git@hub.%s:%s", key, path), p, nil
 
 	default:
-		return raw, false, nil
+		return raw, nil, nil
 	}
 }
 
