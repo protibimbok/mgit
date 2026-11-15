@@ -267,6 +267,31 @@ mgit stash pop
 
 ---
 
+### `mgit edit [key|email]`
+
+Updates a profile's name, email, label and key. Press Enter at a prompt to keep the current value.
+
+```bash
+mgit edit                 # pick a profile from a list
+mgit edit work            # edit by key
+mgit edit me@company.com  # edit by email (must match exactly one profile)
+```
+
+If you run it inside a repo that uses that profile, the repo's `user.name` / `user.email` are updated too.
+
+Changing the key renames `~/.ssh/mgit_<key>` and replaces the `Host hub.<key>` block in
+`~/.ssh/config`. The old alias is removed, so **other repos with `git@hub.<oldkey>:` remotes
+stop working** until you update them (mgit asks you to confirm first):
+
+```bash
+git remote set-url origin git@hub.<newkey>:<user>/<repo>
+mgit init <newkey>
+```
+
+If you run `mgit edit` inside a repo that uses the profile, that repo's remotes are updated for you.
+
+---
+
 ### `mgit remove [key]`
 
 Removes a profile, its SSH key pair, and its `~/.ssh/config` block.

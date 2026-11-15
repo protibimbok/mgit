@@ -17,6 +17,7 @@ var mgitCommands = map[string]bool{
 	"init":    true,
 	"clone":   true,
 	"remove":  true,
+	"edit":    true,
 	"list":    true,
 	"fix":     true,
 	"help":    true,

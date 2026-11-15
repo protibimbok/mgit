@@ -27,6 +27,7 @@ func init() {
 	rootCmd.AddCommand(newCmd)
 	rootCmd.AddCommand(gitInitCmd)
 	rootCmd.AddCommand(cloneCmd)
+	rootCmd.AddCommand(editCmd)
 	rootCmd.AddCommand(removeCmd)
 	rootCmd.AddCommand(listCmd)
 	rootCmd.AddCommand(fixCmd)
