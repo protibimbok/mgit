@@ -167,6 +167,9 @@ mgit init          # auto-detects or asks once
 mgit init work     # use (or switch to) a specific profile
 ```
 
+If the repo has `git@hub.<key>:` remotes for a profile that no longer exists (e.g. it was
+renamed with `mgit edit` or removed), `mgit init` rewrites them to the chosen profile.
+
 ---
 
 ### `mgit clone`
@@ -281,12 +284,8 @@ If you run it inside a repo that uses that profile, the repo's `user.name` / `us
 
 Changing the key renames `~/.ssh/mgit_<key>` and replaces the `Host hub.<key>` block in
 `~/.ssh/config`. The old alias is removed, so **other repos with `git@hub.<oldkey>:` remotes
-stop working** until you update them (mgit asks you to confirm first):
-
-```bash
-git remote set-url origin git@hub.<newkey>:<user>/<repo>
-mgit init <newkey>
-```
+stop working** until you run `mgit init <newkey>` in each of them (mgit asks you to confirm
+before renaming).
 
 If you run `mgit edit` inside a repo that uses the profile, that repo's remotes are updated for you.
 

@@ -79,6 +79,21 @@ func detectRepoProfile(cfg *config.Config) (*config.Profile, string) {
 	return nil, ""
 }
 
+// staleRepoKeys returns the hub.<key> keys used by the current repo's remotes
+// that no longer match any profile.
+func staleRepoKeys(cfg *config.Config) []string {
+	seen := map[string]bool{}
+	var keys []string
+	for _, url := range gitRemoteURLs() {
+		key := profileKeyFromRemoteURL(url)
+		if key != "" && !seen[key] && cfg.FindByKey(key) == nil {
+			seen[key] = true
+			keys = append(keys, key)
+		}
+	}
+	return keys
+}
+
 // profileKeyFromRemoteURL extracts <key> from a git@hub.<key>:user/repo URL.
 func profileKeyFromRemoteURL(url string) string {
 	m := hubRemotePattern.FindStringSubmatch(strings.TrimSpace(url))

@@ -74,9 +74,8 @@ func runEdit(_ *cobra.Command, args []string) error {
 			return err
 		}
 		fmt.Printf("\nWarning: renaming %q to %q removes the SSH alias hub.%s.\n", oldKey, newKey, oldKey)
-		fmt.Printf("Existing repos with git@hub.%s: remotes will fail to push/pull/fetch until you update them, e.g.:\n", oldKey)
-		fmt.Printf("  git remote set-url origin git@hub.%s:<user>/<repo>\n", newKey)
-		fmt.Printf("and mgit will no longer recognise their saved profile (re-run 'mgit init %s' there).\n", newKey)
+		fmt.Printf("Existing repos with git@hub.%s: remotes will fail to push/pull/fetch until you\n", oldKey)
+		fmt.Printf("run 'mgit init %s' in each of them (it rewrites the remotes).\n", newKey)
 		if repoUsesProfile {
 			fmt.Println("The current repo will be updated automatically.")
 		}

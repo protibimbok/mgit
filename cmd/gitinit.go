@@ -53,6 +53,11 @@ func runGitInit(_ *cobra.Command, args []string) error {
 	if err := applyProfileToRepo("", profile); err != nil {
 		return err
 	}
+	// Remotes pointing at profiles that no longer exist (e.g. renamed or
+	// removed) are moved to the chosen profile.
+	for _, key := range staleRepoKeys(cfg) {
+		rewriteRepoRemotes(key, profile.Key)
+	}
 	fmt.Printf("Git user set to %s <%s>\n", profile.Name, profile.Email)
 	return nil
 }
